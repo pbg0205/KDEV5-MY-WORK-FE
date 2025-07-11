@@ -1,51 +1,94 @@
 // components/RowItem.jsx
 import React from "react";
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, Chip, Stack, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
 import dayjs from "dayjs";
+import AccessTimeIcon from "@mui/icons-material/AccessTimeRounded";
 
 export default function RowItem({ name, endAt, dday, id }) {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const getColorKey = (dday) => {
     if (dday <= 1) return "error";
     if (dday <= 3) return "warning";
-    return "success";
+    return "neutral"; // success 대신 neutral로 변경
   };
 
   const colorKey = getColorKey(dday);
+  const statusColor = theme.palette.status[colorKey];
 
   return (
-    <Box
+    <Paper
       onClick={() => navigate(`/projects/${id}/posts`)}
-      sx={(theme) => ({
+      elevation={0}
+      sx={{
+        p: 2.5,
+        mb: 1.5,
+        borderRadius: 2,
         cursor: "pointer",
-        "&:hover": { bgcolor: theme.palette.grey[100] },
-        borderRadius: 1,
-        borderColor: "divider",
-        p: 1,
-      })}
+        border: `1px solid ${theme.palette.divider}`,
+        backgroundColor: colorKey === "neutral" ? "background.paper" : statusColor.bg,
+        transition: "all 0.2s ease",
+        "&:hover": {
+          transform: "translateY(-1px)",
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        },
+      }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Box>
-          <Typography fontWeight={500} color="text.primary">
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography 
+            variant="subtitle2" 
+            sx={{
+              fontWeight: 600,
+              color: "text.primary",
+              fontSize: "0.9rem",
+              lineHeight: 1.4,
+              mb: 0.5,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
             {name}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            종료 예정일: {dayjs(endAt).format("YYYY-MM-DD")}
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={0.5}>
+            <AccessTimeIcon 
+              sx={{ 
+                fontSize: 14, 
+                color: "text.secondary",
+              }} 
+            />
+            <Typography 
+              variant="caption" 
+              sx={{
+                color: "text.secondary",
+                fontSize: "0.75rem",
+                fontWeight: 500,
+              }}
+            >
+              {dayjs(endAt).format("MM월 DD일 마감")}
+            </Typography>
+          </Stack>
         </Box>
+        
         <Chip
           label={`D-${dday}`}
-          variant="filled"
-          sx={(theme) => ({
-            borderRadius: 1,
-            fontWeight: 500,
-            bgcolor: theme.palette.status[colorKey].bg,
-            color: theme.palette.status[colorKey].main,
-          })}
+          size="small"
+          sx={{
+            borderRadius: 1.5,
+            fontWeight: 600,
+            fontSize: "0.75rem",
+            backgroundColor: colorKey === "neutral" ? theme.palette.grey[600] : statusColor.main,
+            color: "white",
+            border: "none",
+            minWidth: 50,
+            height: 24,
+          }}
         />
       </Stack>
-    </Box>
+    </Paper>
   );
 }

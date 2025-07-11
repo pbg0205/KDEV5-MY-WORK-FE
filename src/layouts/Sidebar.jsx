@@ -76,20 +76,42 @@ export default function Sidebar({
           }}
         >
           <div className="profile-text" style={{ marginLeft: 8 }}>
-            <Typography variant="body2">
+            <Typography variant="body2" className="profile-role">
               {getRoleLabel(memberRole) || ""}
             </Typography>
-            <Typography variant="subtitle1">{memberName || ""}</Typography>
+            <Typography variant="subtitle1" className="profile-name">
+              {memberName || ""}
+            </Typography>
           </div>
-          <IconButton size="small" onClick={onNotificationsClick}>
+          <IconButton 
+            size="small" 
+            onClick={onNotificationsClick}
+            sx={{
+              backgroundColor: (theme) => theme.palette.grey[100],
+              color: (theme) => theme.palette.text.secondary,
+              borderRadius: 1.5,
+              width: 32,
+              height: 32,
+              transition: "all 0.2s ease",
+              "&:hover": {
+                backgroundColor: (theme) => `${theme.palette.primary.main}10`,
+                color: (theme) => theme.palette.primary.main,
+              },
+            }}
+          >
             <Badge
               badgeContent={unreadCount > 0 ? unreadCount : null}
               color="error"
+              sx={{
+                "& .MuiBadge-badge": {
+                  fontSize: "0.65rem",
+                  minWidth: "14px",
+                  height: "14px",
+                  borderRadius: "7px",
+                },
+              }}
             >
-              <NotificationsRoundedIcon
-                fontSize="small"
-                sx={{ color: "grey.400" }}
-              />
+              <NotificationsRoundedIcon fontSize="small" />
             </Badge>
           </IconButton>
         </Box>
@@ -98,7 +120,7 @@ export default function Sidebar({
       <NavList>
         <Box>
           {filteredNavItems.map(({ text, icon: Icon, path, children }) => (
-            <Box key={text} sx={{ mb: 2 }}>
+            <Box key={text} sx={{ mb: 1.5 }}>
               {/* 상위 메뉴 */}
               {!children && (
                 <NavItem disablePadding onClick={() => handleItemClick(path)}>
@@ -125,8 +147,14 @@ export default function Sidebar({
                 <>
                   <Typography
                     variant="caption"
-                    color="primary.contrastText"
-                    sx={{ pl: 1 }}
+                    sx={{
+                      pl: 1,
+                      color: "text.secondary",
+                      fontSize: "0.7rem",
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      opacity: 0.8,
+                    }}
                   >
                     {text}
                   </Typography>
@@ -137,7 +165,7 @@ export default function Sidebar({
                         key={childText}
                         disablePadding
                         onClick={() => handleItemClick(childPath)}
-                        sx={{ pl: 3 }}
+                        sx={{ pl: 2 }}
                       >
                         <ListItemButton
                           selected={currentPath === childPath}
@@ -164,15 +192,37 @@ export default function Sidebar({
         </Box>
       </NavList>
 
-      <Box sx={{ mt: "auto" }}>
+      {/* 로그아웃 버튼 */}
+      <Box 
+        sx={{ 
+          mt: "auto",
+          pt: 1.5,
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+        }}
+      >
         <NavItem onClick={handleLogout} disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <ExitToAppIcon sx={{ color: "background.default" }} />
+          <ListItemButton
+            sx={{
+              borderRadius: 2,
+              padding: 1.5,
+              color: (theme) => theme.palette.text.secondary,
+              transition: "all 0.2s ease",
+              "&:hover": {
+                backgroundColor: (theme) => `${theme.palette.error.main}08`,
+                color: (theme) => theme.palette.error.main,
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <ExitToAppIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText
               primary="로그아웃"
-              primaryTypographyProps={{ color: "background.default" }}
+              primaryTypographyProps={{ 
+                color: "inherit",
+                fontWeight: 500,
+                fontSize: "0.875rem",
+              }}
             />
           </ListItemButton>
         </NavItem>
